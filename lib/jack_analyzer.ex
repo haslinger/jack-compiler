@@ -11,11 +11,11 @@ defmodule JackAnalyzer do
   end
 
   def process(file) do
-    IO.puts "====="
+    IO.puts "=== Start ===="
     {:ok, body} = File.read(file)
     body = JackTokenizer.parse(body)
 
     IO.puts body
-    IO.puts "====="
+    IO.puts "=== End ==="
   end
 end
