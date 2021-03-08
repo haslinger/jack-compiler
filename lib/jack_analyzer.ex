@@ -11,7 +11,11 @@ defmodule JackAnalyzer do
   end
 
   def process(file) do
+    IO.puts "====="
     {:ok, body} = File.read(file)
-    IO.inspect body
+    body = JackTokenizer.parse(body)
+
+    IO.puts body
+    IO.puts "====="
   end
 end
