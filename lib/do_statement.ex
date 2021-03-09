@@ -20,8 +20,8 @@ defmodule DoStatement do
     symbol(".", level) <>
     identifier(secondSubroutineName, level) <>
     symbol("(", level) <>
-    indent(level) <> "<exressionList>\n"<>
-    indent(level) <> "</exressionList>\n"<>
+    indent(level) <> "<expressionList>\n"<>
+    indent(level) <> "</expressionList>\n"<>
     symbol(")", level) <>
     compile(left_over_tokens, level)
   end
@@ -33,8 +33,8 @@ defmodule DoStatement do
     keyword(:do, level) <>
     identifier(subroutineName, level) <>
     symbol("(", level) <>
-    indent(level) <> "<exressionList>\n"<>
-    indent(level) <> "</exressionList>\n"<>
+    indent(level) <> "<expressionList>\n"<>
+    indent(level) <> "</expressionList>\n"<>
     symbol(")", level) <>
     compile(left_over_tokens, level)
   end

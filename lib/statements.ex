@@ -22,7 +22,7 @@ defmodule Statements do
   # end of statements
   def compile([%{symbol: :"}"} | _ ] = tokens, level) do
     IO.puts("... Statements 4")
-    indent(level) <> "</statements>\n" <>
+    indent(level - 1) <> "</statements>\n" <>
     SubroutineBody.compile(tokens, level - 1)
   end
 end

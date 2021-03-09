@@ -15,7 +15,7 @@ defmodule LetStatement do
     keyword(:let, level) <>
     identifier(varName, level) <>
     symbol("=", level) <>
-    indent(level + 1) <> "<term>\n"<>
-    Term.compile(left_over_tokens, level + 1, callback: &LetStatement.compile/2)
+    indent(level) <> "<expression>\n"<>
+    Expression.compile(left_over_tokens, level, callback: &LetStatement.compile/2)
   end
 end

@@ -21,7 +21,7 @@ defmodule ClassBody do
 
   def compile([%{symbol: :"}"} | _] = tokens, level) do
     IO.puts("... SubroutineDec 4")
-    indent(level - 1) <> "</subroutineDec>\n" <>
-    Class.compile(tokens, level - 1);
+    indent(level) <> "</subroutineDec>\n" <>
+    Class.compile(tokens, level);
   end
 end

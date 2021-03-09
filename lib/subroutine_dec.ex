@@ -28,7 +28,8 @@ defmodule SubroutineDec do
 
   def compile([%{symbol: :")"} | left_over_tokens], level) do
     IO.puts("... SubroutineDec 3")
-    symbol(")", level) <>
+    indent(level + 1) <> "</parameterList>\n" <>
+    symbol(")", level + 1) <>
     SubroutineBody.compile(left_over_tokens, level)
   end
 
