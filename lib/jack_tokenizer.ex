@@ -48,7 +48,7 @@ defmodule JackTokenizer do
     if text |> String.downcase() |> String.starts_with?(keyword) do
       keyword_length = keyword |> String.length()
       cut_text = text |> String.slice(keyword_length..-1) |> trim()
-      advance({cut_text, [%{tokenType: :keyword, keyword: String.to_atom(keyword)} | tokens]})
+      advance({cut_text, [%{keyword: String.to_atom(keyword)} | tokens]})
     else
       {text, tokens}
     end
@@ -57,7 +57,7 @@ defmodule JackTokenizer do
   def check_for_symbol({text, tokens}, symbol) do
     if text |> String.starts_with?(symbol) do
       cut_text = text |> String.slice(String.length(symbol)..-1) |> trim()
-      advance({cut_text, [%{tokenType: :symbol, symbol: String.to_atom(symbol)} | tokens]})
+      advance({cut_text, [%{symbol: String.to_atom(symbol)} | tokens]})
     else
       {text, tokens}
     end
@@ -69,7 +69,7 @@ defmodule JackTokenizer do
       quoted_string = match |> List.first()
       cut_text = text |> String.slice(String.length(quoted_string)..-1) |> trim()
       string_without_quotes = quoted_string |> String.slice(1..-2)
-      advance({cut_text, [%{tokenType: :string_const, value: string_without_quotes} | tokens]})
+      advance({cut_text, [%{string: string_without_quotes} | tokens]})
     else
       {text, tokens}
     end
@@ -80,7 +80,7 @@ defmodule JackTokenizer do
     if int_string != "" do
       int_value = int_string |> String.to_integer()
       cut_text = text |> String.slice(String.length(int_string)..-1) |> trim()
-      advance({cut_text, [%{tokenType: :int_const, value: int_value} | tokens ]})
+      advance({cut_text, [%{integer: int_value} | tokens ]})
     else
       {text, tokens}
     end
@@ -92,7 +92,7 @@ defmodule JackTokenizer do
     if match do
       identifier = match |> List.first()
       cut_text = text |> String.slice(String.length(identifier)..-1) |> trim()
-      advance({cut_text, [%{tokenType: :identifier, identifier: identifier} | tokens]})
+      advance({cut_text, [%{identifier: identifier} | tokens]})
     else
       {text, tokens}
     end

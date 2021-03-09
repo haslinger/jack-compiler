@@ -7,11 +7,11 @@ defmodule FlatCompilationEngine do
     Enum.reduce(tokens, "",  &(&2 <> compile(&1)))
   end
 
-  def compile(%{tokenType: :keyword, keyword: value}) do
+  def compile(%{keyword: value}) do
     "<keyword> " <> Atom.to_string(value) <> " </keyword>\n"
   end
 
-  def compile(%{tokenType: :symbol, symbol: symbol}) do
+  def compile(%{symbol: symbol}) do
     symbol =
       case Atom.to_string(symbol) do
         "<" -> "&lt;"
@@ -22,15 +22,15 @@ defmodule FlatCompilationEngine do
     "<symbol> " <> symbol <> " </symbol>\n"
   end
 
-  def compile(%{tokenType: :int_const, value: int_const}) do
+  def compile(%{integer: int_const}) do
     "<integerConstant> " <> Integer.to_string(int_const) <> " </integerConstant>\n"
   end
 
-  def compile(%{tokenType: :string_const, value: string_const}) do
+  def compile(%{string: string_const}) do
     "<stringConstant> " <> string_const <> " </stringConstant>\n"
   end
 
-  def compile(%{tokenType: :identifier, identifier: identifier}) do
+  def compile(%{identifier: identifier}) do
     "<identifier> " <> identifier <> " </identifier>\n"
   end
 end
