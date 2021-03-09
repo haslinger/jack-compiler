@@ -39,11 +39,16 @@ defmodule CompilationEngine do
     compileSubroutineDec(left_over_tokens, level + 1)
   end
 
-  # type "int" | "char" | "boolean" varName
+  def compileClassDec([%{symbol: :"{"} | _] = tokens, level) do
+    IO.puts("=== F ===")
+    compileSubroutineBody(tokens, level);
+  end
+
+  # type :int | :char | :boolean varName
   def compileClassVarDec([%{keyword: keyword},
                           %{identifier: varname} | left_over_tokens], level)
-  when keyword in ["int", "char", "boolean"] do
-    IO.puts("=== F ===")
+  when keyword in [:int, :char, :boolean] do
+    IO.puts("=== G ===")
     keyword(keyword, level) <>
     identifier(varname, level) <>
     compileClassVarDec(left_over_tokens, level)
@@ -52,7 +57,7 @@ defmodule CompilationEngine do
   # type className varName
   def compileClassVarDec([%{identifier: className},
                           %{identifier: varName} | left_over_tokens], level) do
-    IO.puts("=== G ===")
+    IO.puts("=== H ===")
     identifier(className, level) <>
     identifier(varName, level) <>
     compileClassVarDec(left_over_tokens, level)
@@ -61,24 +66,24 @@ defmodule CompilationEngine do
   # ,varName *
   def compileClassVarDec([%{symbol: :","},
                           %{identifier: varName} | left_over_tokens], level) do
-    IO.puts("=== H ===")
+    IO.puts("=== I ===")
     identifier(varName, level) <>
     compileClassVarDec(left_over_tokens, level)
   end
 
   # ;
   def compileClassVarDec([%{symbol: :";"} | left_over_tokens], level) do
-    IO.puts("=== I ===")
+    IO.puts("=== J ===")
     indent(level - 1) <> "</classVarDec>\n" <>
     compileClassDec(left_over_tokens, level);
   end
 
-  # ("void" | "int" | "char" | "boolean") subroutineName "("
+  # (:void | :int | :char | :boolean) subroutineName "("
   def compileSubroutineDec([%{keyword: keyword},
                             %{identifier: subroutineName},
                             %{symbol: :"("} | left_over_tokens], level)
-  when keyword in ["void", "int", "char", "boolean"] do
-    IO.puts("=== J ===")
+  when keyword in [:void, :int, :char, :boolean] do
+    IO.puts("=== K ===")
     keyword(keyword, level) <>
     identifier(subroutineName, level) <>
     symbol("(", level) <>
@@ -90,7 +95,7 @@ defmodule CompilationEngine do
   def compileSubroutineDec([%{identifier: className},
                             %{identifier: subroutineName},
                             %{symbol: :"("} | left_over_tokens], level) do
-    IO.puts("=== K ===")
+    IO.puts("=== L ===")
     identifier(className, level) <>
     identifier(subroutineName, level) <>
     symbol("(", level) <>
@@ -98,21 +103,17 @@ defmodule CompilationEngine do
     compileParameterList(left_over_tokens, level + 1)
   end
 
-  def compileSubroutineDec([%{identifier: "{"} | _ ] = tokens, level) do
-    IO.puts("=== L ===")
-    compileSubroutineBody(tokens, level);
-  end
-
-  def compileSubroutineDec(tokens, level) do
+  def compileSubroutineDec([%{symbol: :")"} | left_over_tokens], level) do
     IO.puts("=== M ===")
-    indent(level) <> "</subroutineDec>\n" <>
-    compileClassDec(tokens, level - 1)
+    symbol(")", level) <>
+    indent(level - 1) <> "</subroutineDec>\n" <>
+    compileClassDec(left_over_tokens, level - 1)
   end
 
-  # type "void" | "int" | "char" varName
+  # type :void | :int | :char varName
   def compileParameterList([%{keyword: keyword},
                             %{identifier: varName} | left_over_tokens], level)
-  when keyword in ["int", "char", "boolean"] do
+  when keyword in [:int, :char, :boolean] do
     IO.puts("=== N ===")
     keyword(keyword, level) <>
     identifier(varName, level) <>
@@ -128,11 +129,11 @@ defmodule CompilationEngine do
     compileParameterList(left_over_tokens, level)
   end
 
-  #  "," type "void" | "int" | "char" varName
+  #  "," type :void | :int | :char varName
   def compileParameterList([%{symbol: :","},
                             %{keyword: keyword},
                             %{identifier: varName} | left_over_tokens], level)
-  when keyword in ["int", "char", "boolean"] do
+  when keyword in [:int, :char, :boolean] do
     IO.puts("=== P ===")
     symbol(",", level) <>
     keyword(keyword, level) <>
@@ -160,18 +161,18 @@ defmodule CompilationEngine do
   end
 
   # subroutineBody: "{" varDec* statements "}"
-  def compileSubroutineBody([%{identifier: "{"} | left_over_tokens], level) do
+  def compileSubroutineBody([%{symbol: :"{"} | left_over_tokens], level) do
     IO.puts("=== S ===")
     indent(level) <> "<subroutineBody>\n" <>
     symbol("{", level + 1) <>
     compileSubroutineBody(left_over_tokens, level + 1)
   end
 
-  # "var" type "void" | "int" | "char" varName
+  # "var" type :void | :int | :char varName
   def compileSubroutineBody([%{keyword: :var},
                              %{keyword: keyword},
                              %{identifier: varName} | left_over_tokens], level)
-  when keyword in ["int", "char", "boolean"]  do
+  when keyword in [:int, :char, :boolean]  do
     IO.puts("=== T ===")
     keyword(:varDec, level) <>
     keyword(:var, level + 1) <>
@@ -200,7 +201,7 @@ defmodule CompilationEngine do
   end
 
   # ("," varName)*
-  def compileVariableDeclaration([%{keyword: ","},
+  def compileVariableDeclaration([%{symbol: :","},
                                   %{identifier: varName} | left_over_tokens], level) do
     IO.puts("=== W ===")
     symbol(",", level) <>
@@ -209,7 +210,7 @@ defmodule CompilationEngine do
   end
 
   #";"
-  def compileVariableDeclaration([%{keyword: ";"} | left_over_tokens], level) do
+  def compileVariableDeclaration([%{symbol: :";"} | left_over_tokens], level) do
     IO.puts("=== X ===")
     symbol(";", level) <>
     indent(level- 1) <> "</varDec>\n" <>
@@ -218,7 +219,7 @@ defmodule CompilationEngine do
 
   #FIXME! compileStatements
 
-  def compileStatements([%{keyword: "}"} | left_over_tokens ], level) do
+  def compileStatements([%{symbol: :"}"} | left_over_tokens ], level) do
     IO.puts("=== Y ===")
     indent(level) <> "</statements>"<>
     symbol("}", level) <>
