@@ -1,49 +1,47 @@
-defmodule FlatCompilationEngine do
+defmodule CompilationEngine do
   def compile(%{tokens: tokens}) do
     compileClass(tokens, 0)
   end
 
-  ## class: 'class' className '{'  classVarDec* subroutineDec* '}'
+  ## class: "class" className "{"  classVarDec* subroutineDec* "}"
   def compileClass([%{keyword: :class},
                     %{identifier: className},
-                    %{symbol: '{'} | left_over_tokens], level)
-  when is_list(tokens) do
-    indent(level) <> '<class>\n' <>
-    keyword('class', level + 1) <>
+                    %{symbol: "{"} | left_over_tokens], level) do
+    indent(level) <> "<class>\n" <>
+    keyword("class", level + 1) <>
     identifier(className, level + 1) <>
-    symbol('{', level + 1) <>
-    compileClassDec(tokens, level)
+    symbol("{", level + 1) <>
+    compileClassDec(left_over_tokens, level)
   end
 
-  def ccompileClass(%{symbol: '}', level} do
-    symbol('}', level + 1) <>
-    indent(level) <> '</class>\n'
+  def compileClass([%{symbol: "}"}], level) do
+    symbol("}", level + 1) <>
+    indent(level) <> "</class>\n"
   end
 
-  ## classVarDec: ('static' | 'field' )
+  ## classVarDec: ("static" | "field" )
   def compileClassDec([%{keyword: keyword} | left_over_tokens], level)
   when keyword in [:static, :field] do
-    indent(level) <> '<classVarDec>\n' <>
+    indent(level) <> "<classVarDec>\n" <>
     keyword(keyword, level + 1) <>
-    compileClassVarDec(left_over_tokens, level + 1);
+    compileClassVarDec(left_over_tokens, level + 1)
   end
 
-  ## subroutineDec: ('constructor', 'function', 'method')
+  ## subroutineDec: ("constructor", "function", "method")
   def compileClassDec([%{keyword: keyword} | left_over_tokens], level)
   when keyword in [:constructor, :function, :method] do
-    indent(level) <> '<subroutineDec>\n' <>
+    indent(level) <> "<subroutineDec>\n" <>
     keyword(keyword, level + 1) <>
-    compileSubroutineDec(left_over_tokens, level + 1);
-    end
+    compileSubroutineDec(left_over_tokens, level + 1)
   end
 
-  # type 'int' | 'char' | 'boolean' varName
+  # type "int" | "char" | "boolean" varName
   def compileClassVarDec([%{keyword: keyword},
                           %{identifier: varname} | left_over_tokens], level)
-  when keyword in ['int', 'char', 'boolean'] do
+  when keyword in ["int", "char", "boolean"] do
     keyword(keyword, level) <>
     identifier(varname, level) <>
-    compileClassVarDec(left_over_tokens, level);
+    compileClassVarDec(left_over_tokens, level)
   end
 
   # type className varName
@@ -51,61 +49,61 @@ defmodule FlatCompilationEngine do
                           %{identifier: varName} | left_over_tokens], level) do
     identifier(className, level) <>
     identifier(varName, level) <>
-    compileClassVarDec(left_over_tokens, level);
+    compileClassVarDec(left_over_tokens, level)
   end
 
   # ,varName *
-  def compileClassVarDec([%{symbol: ','},
-                          %{identifier: varName} | left_over_tokens], level]) do
+  def compileClassVarDec([%{symbol: ","},
+                          %{identifier: varName} | left_over_tokens], level) do
     identifier(varName, level) <>
-    compileClassVarDec(left_over_tokens, level);
+    compileClassVarDec(left_over_tokens, level)
   end
 
   # ;
-  def compileClassVarDec([%{symbol: ';'} | left_over_tokens], level]) do
-    indent(level - 1) <> '</classVarDec>\n' <>
+  def compileClassVarDec([%{symbol: ";"} | left_over_tokens], level) do
+    indent(level - 1) <> "</classVarDec>\n" <>
     compileClassDec(left_over_tokens, level);
+  end
 
-  # ('void' | 'int' | 'char' | 'boolean') subroutineName '('
+  # ("void" | "int" | "char" | "boolean") subroutineName "("
   def compileSubroutineDec([%{keyword: keyword},
                             %{identifier: subroutineName},
-                            %{symbol: '('} | left_over_tokens], level)
-  when keyword in ['void', 'int', 'char', 'boolean'] do
+                            %{symbol: "("} | left_over_tokens], level)
+  when keyword in ["void", "int", "char", "boolean"] do
     keyword(keyword, level) <>
     identifier(subroutineName, level) <>
-    symbol('(', level) <>
-    compileSubroutineDec(left_over_tokens, level);
+    symbol("(", level) <>
+    indent(level) <> "<parameterList>\n" <>
+    compileSubroutineDec(left_over_tokens, level)
   end
 
-  # className subroutineName '('
+  # className subroutineName "("
   def compileSubroutineDec([%{identifier: className},
                             %{identifier: subroutineName},
-                            %{symbol: '('} | left_over_tokens], level)
-  when keyword in ['void'] do
+                            %{symbol: "("} | left_over_tokens], level) do
     identifier(className, level) <>
     identifier(subroutineName, level) <>
-    symbol('(', level) <>
-    symbol('<parameterList>', level) <>
-    compileParameterList(left_over_tokens, level + 1);
+    symbol("(", level) <>
+    indent(level) <> "<parameterList>\n" <>
+    compileParameterList(left_over_tokens, level + 1)
   end
 
-  def compileSubroutineDec([%{identifier: '{'} | _ ] = tokens, level)
-  when keyword in ['void'] do
+  def compileSubroutineDec([%{identifier: "{"} | _ ] = tokens, level) do
     compileSubroutineBody(tokens, level);
   end
 
   def compileSubroutineDec(tokens, level) do
-    indent(level) <> '</subroutineDec>\n' <>
-    compileClassDeclaration(tokens, level - 1)
+    indent(level) <> "</subroutineDec>\n" <>
+    compileClassDec(tokens, level - 1)
   end
 
-  # type 'void' | 'int' | 'char' varName
+  # type "void" | "int" | "char" varName
   def compileParameterList([%{keyword: keyword},
                             %{identifier: varName} | left_over_tokens], level)
-  when keyword in ['int', 'char', 'boolean'] do
+  when keyword in ["int", "char", "boolean"] do
     keyword(keyword, level) <>
     identifier(varName, level) <>
-    compileParameterList(left_over_tokens, level);
+    compileParameterList(left_over_tokens, level)
   end
 
   #  type className varName
@@ -113,49 +111,49 @@ defmodule FlatCompilationEngine do
                             %{identifier: varName} | left_over_tokens], level) do
     identifier(className, level) <>
     identifier(varName, level) <>
-    compileParameterList(left_over_tokens, level);
+    compileParameterList(left_over_tokens, level)
   end
 
-  #  ',' type 'void' | 'int' | 'char' varName
-  def compileParameterList([%{symbol: ','},
+  #  "," type "void" | "int" | "char" varName
+  def compileParameterList([%{symbol: ","},
                             %{keyword: keyword},
                             %{identifier: varName} | left_over_tokens], level)
-  when keyword in ['int', 'char', 'boolean'] do
-    symbol(',', level) <>
+  when keyword in ["int", "char", "boolean"] do
+    symbol(",", level) <>
     keyword(keyword, level) <>
     identifier(varName, level) <>
-    compileParameterList(left_over_tokens, level);
+    compileParameterList(left_over_tokens, level)
   end
 
-  #  ',' type className varName
-  def compileParameterList([%{symbol: ','},
+  #  "," type className varName
+  def compileParameterList([%{symbol: ","},
                             %{identifier: className},
                             %{identifier: varName} | left_over_tokens], level) do
-    symbol(',', level) <>
+    symbol(",", level) <>
     identifier(className, level) <>
     identifier(varName, level) <>
-    compileParameterList(left_over_tokens, level);
+    compileParameterList(left_over_tokens, level)
   end
 
   # ")"
-  def compileParameterList([%{symbol: ')'} | left_over_tokens], level) do
-    symbol(')', level) <>
-    symbol('</parameterList>', level) <>
-    compileSubroutineBody(left_over_tokens, level -1)
+  def compileParameterList([%{symbol: ")"} | left_over_tokens], level) do
+    symbol(")", level) <>
+    indent(level) <> "</parameterList>\n" <>
+    compileSubroutineBody(left_over_tokens, level - 1)
   end
 
-  # subroutineBody: '{' varDec* statements '}'
-  def compileSubroutineBody([%{identifier: '{'} | left_over_tokens], level) do
-    symbol('<subroutineBody>', level) <>
-    symbol('{', level + 1) <>
-    compileSubroutineBody(level + 1)
+  # subroutineBody: "{" varDec* statements "}"
+  def compileSubroutineBody([%{identifier: "{"} | left_over_tokens], level) do
+    indent(level) <> "<subroutineBody>\n" <>
+    symbol("{", level + 1) <>
+    compileSubroutineBody(left_over_tokens, level + 1)
   end
 
-  # 'var' type 'void' | 'int' | 'char' varName
+  # "var" type "void" | "int" | "char" varName
   def compileSubroutineBody([%{keyword: :var},
                              %{keyword: keyword},
                              %{identifier: varName} | left_over_tokens], level)
-  when keyword in ['int', 'char', 'boolean'])  do
+  when keyword in ["int", "char", "boolean"]  do
     keyword(:varDec, level) <>
     keyword(:var, level + 1) <>
     keyword(keyword, level + 1) <>
@@ -163,11 +161,11 @@ defmodule FlatCompilationEngine do
     compileVariableDeclaration(left_over_tokens, level + 1)
   end
 
-  # 'var' type className varName
+  # "var" type className varName
   def compileSubroutineBody([%{keyword: :var},
                              %{identifier: className},
                              %{identifier: varName} | left_over_tokens], level) do
-    indent(level) <> '<varDec>' <>
+    indent(level) <> "<varDec>\n" <>
     keyword(:var, level + 1) <>
     identifier(className, level + 1) <>
     identifier(varName, level + 1) <>
@@ -176,31 +174,31 @@ defmodule FlatCompilationEngine do
 
   def compileSubroutineBody(tokens, level) do
     keyword(:statements, level) <>
-    indent(level) <> '<statements>'<>
-    compileStatements(token, level + 1)
+    indent(level) <> "<statements>\n"<>
+    compileStatements(tokens, level + 1)
   end
 
-  # (',' varName)*
-  def compileVariableDeclaration([%{keyword: ','},
+  # ("," varName)*
+  def compileVariableDeclaration([%{keyword: ","},
                                   %{identifier: varName} | left_over_tokens], level) do
-    symbol(',', level) <>
-    identifier(keyword, varName) <>
+    symbol(",", level) <>
+    identifier(varName, level) <>
     compileVariableDeclaration(left_over_tokens, level)
   end
 
-  #';'
-  def compileVariableDeclaration([%{keyword: ';'} | left_over_tokens], level) do
-    symbol(';', level) <>
-    indent(level- 1) <> '</varDec>' <>
+  #";"
+  def compileVariableDeclaration([%{keyword: ";"} | left_over_tokens], level) do
+    symbol(";", level) <>
+    indent(level- 1) <> "</varDec>\n" <>
     compileSubroutineBody(left_over_tokens, level - 1)
   end
 
   #FIXME! compileStatements
 
-  def compileStatements([%{keyword: '}'} | left_over_tokens ], level) do
-    indent(level) <> '</statements>'<>
-    symbol('}', level) <>
-    indent(level- 1) <> '</subroutineBody>'<>
+  def compileStatements([%{keyword: "}"} | left_over_tokens ], level) do
+    indent(level) <> "</statements>"<>
+    symbol("}", level) <>
+    indent(level- 1) <> "</subroutineBody>\n" <>
     compileSubroutineDec(left_over_tokens, level - 1)
   end
 
@@ -217,8 +215,8 @@ defmodule FlatCompilationEngine do
 
   def terminal(tag, value, level) do
     indent(level) <> #indentation
-    '<' <> Atom.to_string(tag) <> '> ' <> # Opening Tag
+    "<" <> Atom.to_string(tag) <> "> " <> # Opening Tag
     value <> # Value
-    ' </' <> Atom.to_string(tag) <> '>\n' # Closing Tag + Newline
+    " </" <> Atom.to_string(tag) <> ">\n" # Closing Tag + Newline
   end
 end
