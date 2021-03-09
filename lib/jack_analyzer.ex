@@ -11,6 +11,7 @@ defmodule JackAnalyzer do
   end
 
   def process(file, directory) do
+    IO.puts ("=== Processing:" <> file <> "===")
     {:ok, body} = File.read(file)
 
     filename = file |> Path.basename() |> String.split(".") |> List.first()
