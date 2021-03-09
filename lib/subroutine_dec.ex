@@ -6,19 +6,19 @@ defmodule SubroutineDec do
                %{identifier: subroutineName},
                %{symbol: :"("} | left_over_tokens], level)
   when keyword in [:void, :int, :char, :boolean] do
-    IO.puts("=== SubroutineDec 1 ===")
+    IO.puts("... SubroutineDec 1")
     keyword(keyword, level) <>
     identifier(subroutineName, level) <>
     symbol("(", level) <>
     indent(level) <> "<parameterList>\n" <>
-    compile(left_over_tokens, level)
+    ParameterList.compile(left_over_tokens, level)
   end
 
   # className subroutineName "("
   def compile([%{identifier: className},
                %{identifier: subroutineName},
                %{symbol: :"("} | left_over_tokens], level) do
-    IO.puts("=== SubroutineDec 2 ===")
+    IO.puts("... SubroutineDec 2")
     identifier(className, level) <>
     identifier(subroutineName, level) <>
     symbol("(", level) <>
@@ -27,9 +27,13 @@ defmodule SubroutineDec do
   end
 
   def compile([%{symbol: :")"} | left_over_tokens], level) do
-    IO.puts("=== SubroutineDec 3 ===")
+    IO.puts("... SubroutineDec 3")
     symbol(")", level) <>
-    indent(level - 1) <> "</subroutineDec>\n" <>
-    ClassDec.compile(left_over_tokens, level - 1)
+    SubroutineBody.compile(left_over_tokens, level)
+  end
+
+  def compile([%{symbol: :"}"} | _] = tokens, level) do
+    IO.puts("... SubroutineDec 4")
+    ClassBody.compile(tokens, level - 1);
   end
 end

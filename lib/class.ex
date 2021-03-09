@@ -5,15 +5,15 @@ defmodule Class do
   def compile([%{keyword: :class},
                %{identifier: className},
                %{symbol: :"{"} | left_over_tokens], level) do
-    IO.puts("=== Class 1 ===")
+    IO.puts("... Class 1")
     indent(level) <> "<class>\n" <>
     identifier(className, level + 1) <>
     symbol("{", level + 1) <>
-    ClassDec.compile(left_over_tokens, level)
+    ClassBody.compile(left_over_tokens, level + 1)
   end
 
   def compile([%{symbol: :"}"}], level) do
-    IO.puts("=== Class 2 ===")
+    IO.puts("... Class 2")
     symbol("}", level + 1) <>
     indent(level) <> "</class>\n"
   end

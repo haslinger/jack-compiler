@@ -3,7 +3,7 @@ defmodule LetStatement do
 
   # end of statement
   def compile([%{symbol: :";"} | left_over_tokens ], level) do
-    IO.puts("=== LetStatement 1 ===")
+    IO.puts("... LetStatement 1")
     symbol(";", level) <>
     indent(level - 1) <> "</letStatement>\n"<>
     Statements.compile(left_over_tokens, level - 1)
@@ -11,7 +11,7 @@ defmodule LetStatement do
 
   def compile([%{identifier: varName},
                   %{symbol: :"="} | left_over_tokens], level) do
-    IO.puts("=== LetStatement 2 ===")
+    IO.puts("... LetStatement 2")
     keyword(:let, level) <>
     identifier(varName, level) <>
     symbol("=", level) <>

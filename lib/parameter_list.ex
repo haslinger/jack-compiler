@@ -5,7 +5,7 @@ defmodule ParameterList do
   def compile([%{keyword: keyword},
                %{identifier: varName} | left_over_tokens], level)
   when keyword in [:int, :char, :boolean] do
-    IO.puts("=== ParameterList 1 ===")
+    IO.puts("... ParameterList 1")
     keyword(keyword, level) <>
     identifier(varName, level) <>
     compile(left_over_tokens, level)
@@ -14,7 +14,7 @@ defmodule ParameterList do
   #  type className varName
   def compile([%{identifier: className},
                %{identifier: varName} | left_over_tokens], level) do
-    IO.puts("=== ParameterList 2 ===")
+    IO.puts("... ParameterList 2")
     identifier(className, level) <>
     identifier(varName, level) <>
     compile(left_over_tokens, level)
@@ -25,7 +25,7 @@ defmodule ParameterList do
                %{keyword: keyword},
                %{identifier: varName} | left_over_tokens], level)
   when keyword in [:int, :char, :boolean] do
-    IO.puts("=== ParameterList 3 ===")
+    IO.puts("... ParameterList 3")
     symbol(",", level) <>
     keyword(keyword, level) <>
     identifier(varName, level) <>
@@ -36,7 +36,7 @@ defmodule ParameterList do
   def compile([%{symbol: :","},
                %{identifier: className},
                %{identifier: varName} | left_over_tokens], level) do
-    IO.puts("=== ParameterList 4 ===")
+    IO.puts("... ParameterList 4")
     symbol(",", level) <>
     identifier(className, level) <>
     identifier(varName, level) <>
@@ -44,10 +44,8 @@ defmodule ParameterList do
   end
 
   # ")"
-  def compile([%{symbol: :")"} | left_over_tokens], level) do
-    IO.puts("=== ParameterList 5 ===")
-    symbol(")", level) <>
-    indent(level) <> "</parameterList>\n" <>
-    SubroutineBody.compile(left_over_tokens, level - 1)
+  def compile([%{symbol: :")"} | _] = tokens, level) do
+    IO.puts("... ParameterList 5")
+    SubroutineDec.compile(tokens, level - 1)
   end
 end
