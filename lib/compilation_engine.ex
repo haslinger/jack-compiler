@@ -241,9 +241,8 @@ defmodule CompilationEngine do
   def compileLetStatement([%{symbol: :";"} | left_over_tokens ], level) do
     symbol(";", level) <>
     indent(level - 1) <> "</letStatement>\n"<>
-    compileStatements(left_over_tokens, level -1)
+    compileStatements(left_over_tokens, level - 1)
   end
-
 
   def compileLetStatement([%{identifier: varName},
                            %{symbol: :"="} | left_over_tokens], level) do
@@ -251,19 +250,18 @@ defmodule CompilationEngine do
     identifier(varName, level) <>
     symbol("=", level) <>
     indent(level + 1) <> "<term>\n"<>
-    compileTerm(tokens, level + 1)
+    compileTerm(left_over_tokens, level + 1, callback: &compileLetStatement/2)
   end
 
-  def compileTerm([%{identifier: identifier} | left_over_tokens ]) do
+  def compileTerm([%{identifier: identifier} | left_over_tokens], level, callback: callback) do
     identifier(identifier, level) <>
-    compileExpression(left_over_tokens, level - 1)
+    compileTerm(left_over_tokens, level - 1, callback: callback)
   end
 
-  def compileTerm([%{symbol: :";"} | left_over_tokens ] = tokens, level) do
+  def compileTerm([%{symbol: :";"} | _ ] = tokens, level, callback: callback) do
     indent(level) <> "</term>\n"<>
-    compileExpression(tokens, level - 1)
+    callback.(tokens, level - 1)
   end
-
 
   #!FIXME more expressions to be inserted here
 
