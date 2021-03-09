@@ -181,6 +181,13 @@ defmodule CompilationEngine do
     compileVariableDeclaration(left_over_tokens, level + 1)
   end
 
+  def compileSubroutineBody([%{symbol: :"}"} | left_over_tokens], level) do
+    symbol("}", level) <>
+    indent(level- 1) <> "</subroutineBody>\n" <>
+    compileSubroutineDec(left_over_tokens, level - 1)
+  end
+
+
   # "var" type className varName
   def compileSubroutineBody([%{keyword: :var},
                              %{identifier: className},
@@ -217,17 +224,48 @@ defmodule CompilationEngine do
     compileSubroutineBody(left_over_tokens, level - 1)
   end
 
-  #FIXME! compileStatements
+  def compileStatements([%{keyword: :let} | left_over_tokens ], level) do
+    IO.puts("=== S1 ===")
+    indent(level) <> "<letStatement>\n" <>
+    compileLetStatement(left_over_tokens, level + 1)
+  end
+
+  #FIXME! more compileStatements
 
   def compileStatements([%{symbol: :"}"} | left_over_tokens ], level) do
     IO.puts("=== Y ===")
-    indent(level) <> "</statements>"<>
-    symbol("}", level) <>
-    indent(level- 1) <> "</subroutineBody>\n" <>
-    compileSubroutineDec(left_over_tokens, level - 1)
+    indent(level) <> "</statements>\n"<>
+    compileSubroutineBody(left_over_tokens, level - 1)
   end
 
-  #!FIXME expressions to be inserted here
+  def compileLetStatement([%{symbol: :";"} | left_over_tokens ], level) do
+    symbol(";", level) <>
+    indent(level - 1) <> "</letStatement>\n"<>
+    compileStatements(left_over_tokens, level -1)
+  end
+
+
+  def compileLetStatement([%{identifier: varName},
+                           %{symbol: :"="} | left_over_tokens], level) do
+    keyword(:let, level) <>
+    identifier(varName, level) <>
+    symbol("=", level) <>
+    indent(level + 1) <> "<term>\n"<>
+    compileTerm(tokens, level + 1)
+  end
+
+  def compileTerm([%{identifier: identifier} | left_over_tokens ]) do
+    identifier(identifier, level) <>
+    compileExpression(left_over_tokens, level - 1)
+  end
+
+  def compileTerm([%{symbol: :";"} | left_over_tokens ] = tokens, level) do
+    indent(level) <> "</term>\n"<>
+    compileExpression(tokens, level - 1)
+  end
+
+
+  #!FIXME more expressions to be inserted here
 
   def indent(level) do
     indent_by_spaces = 2
