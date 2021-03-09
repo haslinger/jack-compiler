@@ -17,11 +17,12 @@ defmodule JackAnalyzer do
     output_path = "../" <> directory <> "/output/" <> filename <> "T.xml"
     {:ok, file} = File.open(output_path, [:write, :utf8])
 
-    output =
-      body
-      |> JackTokenizer.parse()
-      |> CompilationEngine.xml_tokens()
+    tokens = JackTokenizer.parse(body)
 
+    # flat_output = FlatCompilationEngine.compile(tokens)
+    # IO.write(file, flat_output)
+
+    output = CompilationEngine.compile(tokens)
     IO.write(file, output)
   end
 end
