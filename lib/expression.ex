@@ -3,7 +3,7 @@ defmodule Expression do
 
   # end of statement
   def compile([%{symbol: symbol} | _] = tokens, level, callback: callback)
-  when symbol in [:")", :";", :"]"] do
+  when symbol in [:")", :";", :"]", :","] do
     IO.puts("... Expression 1")
     indent(level - 1) <> "</expression>\n"<>
     callback.(tokens, level - 1)

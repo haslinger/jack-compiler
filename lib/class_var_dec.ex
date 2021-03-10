@@ -3,7 +3,7 @@ defmodule ClassVarDec do
 
   # ;
   def compile([%{symbol: :";"} | left_over_tokens], level) do
-    IO.puts("... ClassVarDec 4")
+    IO.puts("... ClassVarDec 1")
     indent(level - 1) <> "</classVarDec>\n" <>
     ClassBody.compile(left_over_tokens, level - 1);
   end
@@ -11,7 +11,7 @@ defmodule ClassVarDec do
   # ,varName *
   def compile([%{symbol: :","},
                %{identifier: varName} | left_over_tokens], level) do
-  IO.puts("... ClassVarDec 3")
+  IO.puts("... ClassVarDec 2")
   identifier(varName, level) <>
   compile(left_over_tokens, level)
   end
@@ -21,7 +21,7 @@ defmodule ClassVarDec do
                %{keyword: type},
                %{identifier: varname} | left_over_tokens], level)
     when type in [:int, :char, :boolean] do
-    IO.puts("... ClassVarDec 1")
+    IO.puts("... ClassVarDec 3")
     indent(level) <> "<classVarDec>\n" <>
     keyword(static_or_field, level + 1) <>
     keyword(type, level + 1) <>
@@ -33,7 +33,7 @@ defmodule ClassVarDec do
   def compile([%{keyword: static_or_field},
                %{identifier: className},
                %{identifier: varName} | left_over_tokens], level) do
-    IO.puts("... ClassVarDec 2")
+    IO.puts("... ClassVarDec 4")
     indent(level) <> "<classVarDec>\n" <>
     keyword(static_or_field, level + 1) <>
     identifier(className, level + 1) <>
