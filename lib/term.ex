@@ -4,7 +4,7 @@ defmodule Term do
   def compile([%{symbol: symbol} | _] = tokens, level, stack)
   when symbol in [:")", :";", :","] do
     IO.puts("... Term 1")
-    indent(level) <> "</term>\n"<>
+    indent(level - 1) <> "</term>\n"<>
     Expression.compile(tokens, level - 1, stack)
   end
 

@@ -22,6 +22,6 @@ defmodule ExpressionList do
 
   def compile(tokens, level, stack) do
     IO.puts("... Expression 4")
-    Expression.compile(tokens, level, [&ExpressionList.compile/2 | stack])
+    Expression.compile(tokens, level, [&ExpressionList.compile/3 | stack])
   end
 end

@@ -9,11 +9,11 @@ defmodule SubroutineBody do
     compile(left_over_tokens, level + 1, stack)
   end
 
-  def compile([%{symbol: :"}"} | left_over_tokens], level, stack) do
+  def compile([%{symbol: :"}"} | _] = tokens, level, stack) do
     IO.puts("... SubroutineBody 2")
     symbol("}", level) <>
     indent(level - 1) <> "</subroutineBody>\n" <>
-    SubroutineDec.compile(left_over_tokens, level - 1, stack)
+    SubroutineDec.compile(tokens, level - 1, stack)
   end
 
   # "var" type :void | :int | :char varName
@@ -43,7 +43,6 @@ defmodule SubroutineBody do
 
   def compile(tokens, level, stack) do
     IO.puts("... SubroutineBody 5")
-    indent(level) <> "<statements>\n"<>
-    Statements.compile(tokens, level + 1, [&SubroutineBody.compile/2 | stack])
+    Statements.compile(tokens, level, [&SubroutineBody.compile/3 | stack])
   end
 end

@@ -9,15 +9,15 @@ defmodule IfStatement do
     symbol("}", level) <>
     keyword("else", level)
     symbol("{", level) <>
-    Statements.compile(left_over_tokens, level, [&IfStatement.compile/2 | stack])
+    Statements.compile(left_over_tokens, level, [&IfStatement.compile/3 | stack])
   end
 
   # end of statement
-  def compile([%{symbol: :"}"} | left_over_tokens], level, stack) do
+  def compile([%{symbol: :"}"} | left_over_tokens], level, [callback | stack]) do
     IO.puts("... IfStatement 2")
     symbol("}", level) <>
     indent(level - 1) <> "</ifStatement>\n"<>
-    Statements.compile(left_over_tokens, level - 1, [&IfStatement.compile/2 | stack])
+    callback.(left_over_tokens, level - 1, stack)
   end
 
   def compile([%{keyword: :if},
@@ -26,14 +26,14 @@ defmodule IfStatement do
     indent(level) <> "<ifStatement>\n" <>
     keyword(:if, level + 1) <>
     symbol("(", level + 1) <>
-    Expression.compile(left_over_tokens, level + 1, stack)
+    Expression.compile(left_over_tokens, level + 1, [&IfStatement.compile/3 | stack])
   end
 
   def compile([%{symbol: :")"},
                %{symbol: :"{"} | left_over_tokens], level, stack) do
     IO.puts("... IfStatement 4")
-    symbol(")", level + 1) <>
-    symbol("{", level + 1) <>
-    Statements.compile(left_over_tokens, level + 1, stack)
+    symbol(")", level) <>
+    symbol("{", level) <>
+    Statements.compile(left_over_tokens, level, [&IfStatement.compile/3 | stack])
   end
 end

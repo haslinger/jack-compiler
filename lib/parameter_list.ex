@@ -27,17 +27,17 @@ defmodule ParameterList do
                %{identifier: varName} | left_over_tokens], level, stack)
   when keyword in [:int, :char, :boolean] do
     IO.puts("... ParameterList 4")
-    keyword(keyword, level + 1) <>
-    identifier(varName, level + 1) <>
-    compile(left_over_tokens, level + 1, stack)
+    keyword(keyword, level) <>
+    identifier(varName, level) <>
+    compile(left_over_tokens, level, stack)
   end
 
   #  type className varName
   def compile([%{identifier: className},
                %{identifier: varName} | left_over_tokens], level, stack) do
     IO.puts("... ParameterList 5")
-    identifier(className, level + 1) <>
-    identifier(varName, level + 1) <>
-    compile(left_over_tokens, level + 1, stack)
+    identifier(className, level) <>
+    identifier(varName, level) <>
+    compile(left_over_tokens, level, stack)
   end
 end

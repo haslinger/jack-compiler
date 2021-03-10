@@ -4,6 +4,7 @@ defmodule ClassVarDec do
   # ;
   def compile([%{symbol: :";"} | left_over_tokens], level, stack) do
     IO.puts("... ClassVarDec 1")
+    symbol(";", level) <>
     indent(level - 1) <> "</classVarDec>\n" <>
     ClassBody.compile(left_over_tokens, level - 1, stack);
   end
@@ -12,6 +13,7 @@ defmodule ClassVarDec do
   def compile([%{symbol: :","},
                %{identifier: varName} | left_over_tokens], level, stack) do
   IO.puts("... ClassVarDec 2")
+  symbol(",", level) <>
   identifier(varName, level) <>
   compile(left_over_tokens, level, stack)
   end
@@ -25,8 +27,8 @@ defmodule ClassVarDec do
     indent(level) <> "<classVarDec>\n" <>
     keyword(static_or_field, level + 1) <>
     keyword(type, level + 1) <>
-    identifier(varname, level) <>
-    compile(left_over_tokens, level, stack)
+    identifier(varname, level + 1) <>
+    compile(left_over_tokens, level + 1, stack)
   end
 
   # type className varName
