@@ -11,13 +11,13 @@ defmodule ReturnStatement do
 
   def compile([%{keyword: :return} | left_over_tokens], level) do
     IO.puts("... ReturnStatement 2")
-    keyword(:return, level) <>
-    compile(left_over_tokens, level)
+    indent(level) <> "<returnStatement>\n" <>
+    keyword(:return, level + 1) <>
+    compile(left_over_tokens, level + 1)
   end
 
-  def compile([%{identifier: variableName} | left_over_tokens], level) do
+  def compile(tokens, level) do
     IO.puts("... ReturnStatement 3")
-    identifier(variableName, level) <>
-    compile(left_over_tokens, level)
+    Expression.compile(tokens, level, callback: &ReturnStatement.compile/2)
   end
 end

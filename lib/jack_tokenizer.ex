@@ -80,7 +80,7 @@ defmodule JackTokenizer do
     if int_string != "" do
       int_value = int_string |> String.to_integer()
       cut_text = text |> String.slice(String.length(int_string)..-1) |> trim()
-      advance({cut_text, [%{integer: int_value} | tokens ]})
+      advance({cut_text, [%{integer: int_value} | tokens]})
     else
       {text, tokens}
     end

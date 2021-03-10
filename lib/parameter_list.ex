@@ -1,23 +1,11 @@
 defmodule ParameterList do
   import Helpers
 
-  # type :void | :int | :char varName
-  def compile([%{keyword: keyword},
-               %{identifier: varName} | left_over_tokens], level)
-  when keyword in [:int, :char, :boolean] do
-    IO.puts("... ParameterList 1")
-    keyword(keyword, level) <>
-    identifier(varName, level) <>
-    compile(left_over_tokens, level)
-  end
-
-  #  type className varName
-  def compile([%{identifier: className},
-               %{identifier: varName} | left_over_tokens], level) do
-    IO.puts("... ParameterList 2")
-    identifier(className, level) <>
-    identifier(varName, level) <>
-    compile(left_over_tokens, level)
+  # ")"
+  def compile([%{symbol: :")"} | _] = tokens, level) do
+    IO.puts("... ParameterList 5")
+    indent(level - 1) <> "</parameterList>\n" <>
+    SubroutineDec.compile(tokens, level - 1)
   end
 
   #  "," type :void | :int | :char varName
@@ -43,9 +31,24 @@ defmodule ParameterList do
     compile(left_over_tokens, level)
   end
 
-  # ")"
-  def compile([%{symbol: :")"} | _] = tokens, level) do
-    IO.puts("... ParameterList 5")
-    SubroutineDec.compile(tokens, level - 1)
+  # type :void | :int | :char varName
+  def compile([%{keyword: keyword},
+               %{identifier: varName} | left_over_tokens], level)
+  when keyword in [:int, :char, :boolean] do
+    IO.puts("... ParameterList 1")
+    indent(level) <> "<parameterList>\n" <>
+    keyword(keyword, level + 1) <>
+    identifier(varName, level + 1) <>
+    compile(left_over_tokens, level + 1)
+  end
+
+  #  type className varName
+  def compile([%{identifier: className},
+               %{identifier: varName} | left_over_tokens], level) do
+    IO.puts("... ParameterList 2")
+    indent(level) <> "<parameterList>\n" <>
+    identifier(className, level + 1) <>
+    identifier(varName, level + 1) <>
+    compile(left_over_tokens, level + 1)
   end
 end
