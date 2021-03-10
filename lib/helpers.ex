@@ -7,6 +7,8 @@ defmodule Helpers do
   def keyword(value, level), do: terminal(:keyword, Atom.to_string(value), level)
   def identifier(value, level), do: terminal(:identifier, value, level)
   def symbol(value, level), do: terminal(:symbol, value, level)
+  def integer(value, level), do: terminal(:integer, value, level)
+  def string(value, level), do: terminal(:string, value, level)
 
   def terminal(tag, value, level) do
     indent(level) <> #indentation
