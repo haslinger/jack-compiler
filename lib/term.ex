@@ -3,7 +3,7 @@ defmodule Term do
 
   def compile([%{symbol: :")"} | _] = tokens, level, callback: callback) do
     IO.puts("... Term 1")
-    indent(level - 1) <> "</term>\n"<>
+    indent(level) <> "</term>\n"<>
     Expression.compile(tokens, level - 1, callback: callback)
   end
 
@@ -15,8 +15,8 @@ defmodule Term do
 
   def compile([%{identifier: identifier} | left_over_tokens], level, callback: callback) do
     IO.puts("... Term 3")
-    indent(level + 1) <> "<term>\n"<>
-    identifier(identifier, level) <>
+    indent(level) <> "<term>\n"<>
+    identifier(identifier, level + 1) <>
     compile(left_over_tokens, level + 1, callback: callback)
   end
 end

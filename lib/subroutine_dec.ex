@@ -25,7 +25,7 @@ defmodule SubroutineDec do
     keyword(varType, level + 1) <>
     identifier(subroutineName, level + 1) <>
     symbol("(", level + 1) <>
-    ParameterList.compile(left_over_tokens, level + 1)
+    ParameterList.compile([%{start: true} | left_over_tokens], level + 1)
   end
 
   # className subroutineName "("
@@ -39,6 +39,6 @@ defmodule SubroutineDec do
     identifier(className, level + 1) <>
     identifier(subroutineName, level + 1) <>
     symbol("(", level + 1) <>
-    ParameterList.compile(left_over_tokens, level + 1)
+    ParameterList.compile([%{start: true} | left_over_tokens], level + 1)
   end
 end

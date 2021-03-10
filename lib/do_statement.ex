@@ -10,8 +10,9 @@ defmodule DoStatement do
   end
 
   def compile([%{keyword: :do} | left_over_tokens], level) do
+    IO.puts("... DoStatement 2")
     indent(level) <> "<doStatement>\n" <>
     keyword(:do, level + 1) <>
-    SubroutineCall.call(left_over_tokens, level + 1)
+    SubroutineCall.compile(left_over_tokens, level + 1)
   end
 end

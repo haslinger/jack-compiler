@@ -18,7 +18,7 @@ defmodule SubroutineCall do
     IO.puts("... SubroutineCall 3")
     identifier(subroutineName, level) <>
     symbol("(", level) <>
-    ExpressionList.compile(left_over_tokens, level)
+    ExpressionList.compile([%{start: true} | left_over_tokens], level)
   end
 
   def compile([%{identifier: classOrVarName},
@@ -30,6 +30,6 @@ defmodule SubroutineCall do
     symbol(".", level) <>
     identifier(subroutineName, level) <>
     symbol("(", level) <>
-    ExpressionList.compile(left_over_tokens, level)
+    ExpressionList.compile([%{start: true} | left_over_tokens], level)
   end
 end

@@ -4,9 +4,9 @@ defmodule SubroutineBody do
   # subroutineBody: "{" varDec* statements "}"
   def compile([%{symbol: :"{"} | left_over_tokens], level) do
     IO.puts("... SubroutineBody 1")
-    indent(level + 1) <> "<subroutineBody>\n" <>
-    symbol("{", level + 2) <>
-    compile(left_over_tokens, level + 2)
+    indent(level) <> "<subroutineBody>\n" <>
+    symbol("{", level + 1) <>
+    compile(left_over_tokens, level + 1)
   end
 
   def compile([%{symbol: :"}"} | left_over_tokens], level) do

@@ -23,7 +23,7 @@ defmodule LetStatement do
 
   def compile([%{symbol: :"="} | left_over_tokens], level) do
     IO.puts("... LetStatement 4")
-    symbol("=", level + 1) <>
+    symbol("=", level) <>
     Expression.compile(left_over_tokens, level, callback: &LetStatement.compile/2)
   end
 
@@ -33,6 +33,6 @@ defmodule LetStatement do
     indent(level) <> "<letStatement>\n" <>
     keyword(:let, level + 1) <>
     identifier(varName, level + 1) <>
-    compile(left_over_tokens, level)
+    compile(left_over_tokens, level + 1)
   end
 end
