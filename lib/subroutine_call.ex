@@ -2,9 +2,9 @@ defmodule SubroutineCall do
   import Helpers
 
   # end of statement
-  def compile([%{symbol: :";"} | _] = tokens, level, stack) do
+  def compile([%{symbol: :";"} | _] = tokens, level, [callback |stack]) do
     IO.puts("... SubroutineCall 1")
-    DoStatement.compile(tokens, level, stack)
+    callback.(tokens, level, stack)
   end
 
   def compile([%{symbol: :")"} | left_over_tokens], level, stack) do

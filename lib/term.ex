@@ -8,7 +8,7 @@ defmodule Term do
     callback.(tokens, level - 1, stack)
   end
 
-  def compile([%{symbol: symbol} | _] = tokens, level, [callback |stack])
+  def compile([%{symbol: operator} | _] = tokens, level, [callback |stack])
   when operator in [:"+", :"-", :"*", :"/", :"&", :"|", :"<", :">", :"="] do
     IO.puts("... Term 2")
     indent(level - 1) <> "</term>\n"<>

@@ -13,6 +13,6 @@ defmodule DoStatement do
     IO.puts("... DoStatement 2")
     indent(level) <> "<doStatement>\n" <>
     keyword(:do, level + 1) <>
-    SubroutineCall.compile(left_over_tokens, level + 1, stack)
+    SubroutineCall.compile(left_over_tokens, level + 1, [&DoStatement.compile/3 | stack])
   end
 end
