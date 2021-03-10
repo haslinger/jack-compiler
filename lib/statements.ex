@@ -34,4 +34,9 @@ defmodule Statements do
     IO.puts("... Statements 6")
     IfStatement.compile(tokens, level, [&Statements.shadowed/3 | stack])
   end
+
+  def shadowed([%{keyword: :while} | _] = tokens, level, stack) do
+    IO.puts("... Statements 7")
+    WhileStatement.compile(tokens, level, [&Statements.shadowed/3 | stack])
+  end
 end

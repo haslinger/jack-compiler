@@ -21,8 +21,8 @@ defmodule WhileStatement do
   def compile([%{symbol: :")"},
                %{symbol: :"{"} | left_over_tokens], level, stack) do
     IO.puts("... WhileStatement 4")
-    symbol(")", level + 1) <>
-    symbol("{", level + 1) <>
+    symbol(")", level) <>
+    symbol("{", level) <>
     Statements.compile(left_over_tokens, level, [&WhileStatement.compile/3 | stack])
   end
 end
