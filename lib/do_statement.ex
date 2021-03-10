@@ -9,33 +9,8 @@ defmodule DoStatement do
     Statements.compile(left_over_tokens, level - 1)
   end
 
-  def compile([%{identifier: subroutineName},
-               %{symbol: :"."},
-               %{identifier: secondSubroutineName},
-               %{symbol: :"("},
-               %{symbol: :")"} | left_over_tokens], level) do
-    IO.puts("... DoStatement 2")
+  def compile([%{identifier: subroutineName}, | _] = tokens, level) do
     keyword(:do, level) <>
-    identifier(subroutineName, level) <>
-    symbol(".", level) <>
-    identifier(secondSubroutineName, level) <>
-    symbol("(", level) <>
-    indent(level) <> "<expressionList>\n"<>
-    indent(level) <> "</expressionList>\n"<>
-    symbol(")", level) <>
-    compile(left_over_tokens, level)
-  end
-
-  def compile([%{identifier: subroutineName},
-               %{symbol: :"("},
-               %{symbol: :")"} | left_over_tokens], level) do
-    IO.puts("... DoStatement 3")
-    keyword(:do, level) <>
-    identifier(subroutineName, level) <>
-    symbol("(", level) <>
-    indent(level) <> "<expressionList>\n"<>
-    indent(level) <> "</expressionList>\n"<>
-    symbol(")", level) <>
-    compile(left_over_tokens, level)
+    SubroutineCall.call(tokens, level)
   end
 end
