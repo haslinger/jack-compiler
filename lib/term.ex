@@ -2,7 +2,7 @@ defmodule Term do
   import Helpers
 
   def compile([%{symbol: symbol} | _] = tokens, level, [callback | stack])
-  when symbol in [:";", :",", :"]", :")"] do
+  when symbol in [:";", :",", :")", :"]"] do
     IO.puts("... Term 1")
     indent(level - 1) <> "</term>\n"<>
     callback.(tokens, level - 1, stack)
@@ -48,7 +48,7 @@ defmodule Term do
     IO.puts("... Term 7")
     indent(level) <> "<term>\n"<>
     symbol("(", level + 1) <>
-    Expression.compile(left_over_tokens, level + 1, [&Term.compile/3 | stack])
+    Expression.compile(left_over_tokens, level + 1, [&Term.capture_parens/3 | stack])
   end
 
   def compile([%{identifier: varName}, %{symbol: :"["} | left_over_tokens], level, stack) do
@@ -56,7 +56,7 @@ defmodule Term do
     indent(level) <> "<term>\n"<>
     identifier(varName, level + 1) <>
     symbol("[", level + 1) <>
-    Expression.compile(left_over_tokens, level + 1, [&Term.compile/3 | stack])
+    Expression.compile(left_over_tokens, level + 1, [&Term.capture_parens/3 | stack])
   end
 
   def compile([%{identifier: _}, %{symbol: symbol} | _] = tokens, level, stack)
@@ -71,5 +71,12 @@ defmodule Term do
     indent(level) <> "<term>\n"<>
     identifier(varName, level + 1) <>
     compile(left_over_tokens, level + 1, stack)
+  end
+
+  def capture_parens([%{symbol: parens} | left_over_tokens], level, stack)
+  when parens in [:")", :"]"] do
+    IO.puts("... Term 11")
+    symbol(Atom.to_string(parens), level) <>
+    compile(left_over_tokens, level, stack)
   end
 end
